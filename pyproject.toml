@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi-13"
+name = "fastapi-testing-14"
 version = "0.1.0"
 description = ""
 authors = ["Andrii Kylymnyk <a.kylymnyk@gmail.com>"]
