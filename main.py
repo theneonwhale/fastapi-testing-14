@@ -1,6 +1,7 @@
 import time
 from ipaddress import ip_address
 from typing import Callable
+import pathlib
 
 import redis.asyncio as redis
 from fastapi import FastAPI, Depends, HTTPException, Request, status
@@ -54,22 +55,22 @@ ALLOWED_IPS = [
 ]
 
 
-@app.middleware("http")
-async def limit_access_by_ip(request: Request, call_next: Callable):
-    """
-    The limit_access_by_ip function is a middleware function that limits access to the API by IP address.
-    It checks if the client's IP address is in ALLOWED_IPS, and if not, returns a 403 Forbidden response.
-
-    :param request: Request: Access the request object
-    :param call_next: Callable: Pass the next function in the chain
-    :return: An error if the ip address is not allowed
-    :doc-author: Trelent
-    """
-    ip = ip_address(request.client.host)
-    if ip not in ALLOWED_IPS:
-        return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": "Not allowed IP address"})
-    response = await call_next(request)
-    return response
+# @app.middleware("http")
+# async def limit_access_by_ip(request: Request, call_next: Callable):
+#     """
+#     The limit_access_by_ip function is a middleware function that limits access to the API by IP address.
+#     It checks if the client's IP address is in ALLOWED_IPS, and if not, returns a 403 Forbidden response.
+#
+#     :param request: Request: Access the request object
+#     :param call_next: Callable: Pass the next function in the chain
+#     :return: An error if the ip address is not allowed
+#     :doc-author: Trelent
+#     """
+#     ip = ip_address(request.client.host)
+#     if ip not in ALLOWED_IPS:
+#         return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": "Not allowed IP address"})
+#     response = await call_next(request)
+#     return response
 
 
 @app.middleware('http')
@@ -90,7 +91,8 @@ async def custom_middleware(request: Request, call_next):
     return response
 
 templates = Jinja2Templates(directory='templates')
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = pathlib.Path(__file__).parent
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 
 @app.get("/", response_class=HTMLResponse, description="Main Page")
